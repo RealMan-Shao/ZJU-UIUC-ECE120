@@ -1,79 +1,116 @@
+;this program read the value of each line, than decide output by each bit using a mask
+.ORIG	x3000
+    ;initialize all registers
+    AND	R0,	R0, #0 ;print out
+    AND	R1,	R1, #0 ;R1 is row counter
+    AND	R2,	R2,	#0 ;row value
+    AND	R3,	R3,	#0 ;character order in ASCII
+    AND R4, R4, #0 ;character order in FONT_DATA
+	AND R5, R5, #0 ;mask
+	AND R6, R6, #0 ;cache
+    AND R7, R7, #0
+
+;this is loading the FONT_DATA (which to print) to R4
+LDI R3, char  ;R3 hold the ascii value of char
+LEA R4, FONT_DATA
+ADD R3,R3,R3
+ADD R3,R3,R3
+ADD R3,R3,R3
+ADD R3,R3,R3 ; R3x16
+ADD R4,R4,R3 ; R4 hold the address in FONT data, R4=start+R3x16(16 row each char)
+
+rowloop  ADD	R5,	R1,	#-16
+         BRz	DONE        ; determine whether it's end
+         LDR	R2,	R4,	#0  ;load row value to R2
+         ADD	R1,	R1,	#1  ;counter+1
+         ADD    R4, R4, #1  ;next row
+
+        column1     LD R5, mask1 ;load mask1 to R5
+                    AND R6,R2,R5
+                    BRz #3 
+                    LDI R0, ones
+                    out
+                    BR #2
+                    LDI R0, zeros
+                    out
+        column2     LD R5, mask2 
+                    AND R6,R2,R5
+                    BRz #3 
+                    LDI R0, ones
+                    out
+                    BR #2
+                    LDI R0, zeros
+                    out
+        column3     LD R5, mask3 
+                    AND R6,R2,R5
+                    BRz #3 
+                    LDI R0, ones
+                    out
+                    BR #2
+                    LDI R0, zeros
+                    out
+        column4     LD R5, mask4 
+                    AND R6,R2,R5
+                    BRz #3 
+                    LDI R0, ones
+                    out
+                    BR #2
+                    LDI R0, zeros
+                    out
+        column5     LD R5, mask5 
+                    AND R6,R2,R5
+                    BRz #3 
+                    LDI R0, ones
+                    out
+                    BR #2
+                    LDI R0, zeros
+                    out
+        column6     LD R5, mask6 
+                    AND R6,R2,R5
+                    BRz #3 
+                    LDI R0, ones
+                    out
+                    BR #2
+                    LDI R0, zeros
+                    out
+        column7     LD R5, mask7 
+                    AND R6,R2,R5
+                    BRz #3 
+                    LDI R0, ones
+                    out
+                    BR #2
+                    LDI R0, zeros
+                    out
+        column8     LD R5, mask8 
+                    AND R6,R2,R5
+                    BRz #3 
+                    LDI R0, ones
+                    out
+                    BR #2
+                    LDI R0, zeros
+                    out
+                    LD R0, linefeed ;print \n
+		    out
+                    BR rowloop
+DONE HALT 
+
+zeros .fill x5000
+ones  .fill x5001
+char  .fill x5002
+linefeed .fill x000A
+mask1 .fill x8000   ;from 1000 0000 00000000 to 0000 0001 00000000, this will determine printout by bit
+mask2 .fill x4000
+mask3 .fill x2000
+mask4 .fill x1000
+mask5 .fill x0800
+mask6 .fill x0400
+mask7 .fill x0200
+mask8 .fill x0100
+
 ; The table below represents an 8x16 font.  For each 8-bit extended ASCII
 ; character, the table uses 16 memory locations, each of which contains
 ; 8 bits (the high 8 bits, for your convenience) marking pixels in the
 ; line for that character.
-
-;introduction: This program is trying to print out texts with sprites. by using counters to count the number of characters, number of column ans rows to find the ASCII code for the texts. And then used a comparater "MASK" to determe weither to print sprite or space. 
-
-;R1, line counter
-;R2, character counter
-;R3, address of the character
-;R4, value (content) of the character
-;R5, temp. register, shift counter
-;R6, temp. register
-
-.ORIG x3000			;where the program start
-
-	LEA R3, FONT_DATA	;load FONT_DATA to R3
-	AND R1, R1, #0		;clear R1
-	AND R2, R2, #0		;clear R2
-	AND R4, R4, #0		;clear R4
-	AND R5, R5, #0		;clear R5
-	AND R6, R6, #0		;clear R6
-	
-
-OUTLOOP	LD R6,LINE		;load -16 to R6
-	ADD R5, R1, R6		;R5 <- R1 - 16
-	BRp FINISH		;if positive, jump to finish
-
-	LD R2, STRING		;load string address for hello in to R2
-	LDR R4, R2, #0		;load the content of string address into R4
-
-INLOOP	ADD R4, R4, R4		;add R4 to itself four time to get R4*16
-	ADD R4, R4, R4
-	ADD R4, R4, R4
-	ADD R4, R4, R4
-
-	ADD R4, R4, R3		;find the character address in FONT_DATA
-	ADD R6, R4, R1		;go to next line, starting form R1 = 0
-	LDR R4, R6, #0		;load content of the FONT_DATA address
-
-	AND R5, R5, #0		;clear R6
-	ADD R5, R5, #8		;let R5 be the shift counter
-
-DETERM	LD R6, MASK		;load x8000 into R6
-	AND R6, R6, R4		;AND mask with R4 to determine weither to print 				;space of sprite 
-	BRz PSPACE		;if zero, jump tp PSPACE
-	
-	LDI R0, SPRITE		;if positive or negative, load x002Ain to R0
-	OUT			;printout sprite
-	BRnzp LSHIFT		;go to LSHIFT
-
-PSPACE	LDI R0, SPACE		;load x0020 in to R0
-	OUT			;printout space
-	BRnzp LSHIFT		;go to LSHIFT
-
-LSHIFT	ADD R4, R4, R4		;add R4 to itself for left shift
-	ADD R5, R5, #-1		;shift counter decreases
-	BRp DETERM		;if possible, go to DETERM
-	ADD R2, R2, #1		;increase R2 by 1 to find next character
-	LDR R4, R2, #0		;load the content of the character in to R4
-	
-	BRnp INLOOP		;if R4 is negative or possible, go to INLOOP
-
-	LD R0, ENTER		;if R4 is zero, load x0A(ASC2 code for enter) 					;in to R0
-	OUT			;print out enter
-	ADD R1, R1, #1		;increase line counter by 1
-	BRnzp OUTLOOP		;go to OUTLOOP
-
-FINISH 	HALT			;halt
-
-LINE .FILL XFFF0
-STRING .FILL x5002		;string address for hello starting from H
-SPACE .FILL x5000		;address for space
-SPRITE .FILL X5001		;address for sprite
-MASK .FILL X8000		;x8000
-ENTER .FILL X0A			;ASC2 code for enter
 
 FONT_DATA
 	.FILL	x0000
@@ -4172,5 +4209,4 @@ FONT_DATA
 	.FILL	x0000
 	.FILL	x0000
 	.FILL	x0000
-
 .END
