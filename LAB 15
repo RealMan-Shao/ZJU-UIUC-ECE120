@@ -2,7 +2,7 @@
     ;initialize all registers
     AND	R0,	R0, #0 ;print out
     AND	R1,	R1, #0 ;row counter
-    AND	R2,	R2，#0 ;row value
+    AND	R2,	R2, #0 ;row value
     AND	R3,	R3, #0 ;character order in ASCII
     AND R4, R4, #0 ;character order in FONT_DATA
     AND R5, R5, #0 ;cache
