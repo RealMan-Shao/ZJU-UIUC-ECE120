@@ -2,22 +2,22 @@
     ;initialize all registers
     AND	R0,	R0, #0 ;print out
     AND	R1,	R1, #0 ;row counter
-    AND	R2,	R2,	#0 ;row value
-    AND	R3,	R3,	#0 ;character order in ASCII
+    AND	R2,	R2，#0 ;row value
+    AND	R3,	R3, #0 ;character order in ASCII
     AND R4, R4, #0 ;character order in FONT_DATA
-	AND R5, R5, #0 ;cache
-	AND R6, R6, #0 ;cache
+    AND R5, R5, #0 ;cache
+    AND R6, R6, #0 ;cache
     AND R7, R7, #0
 
 
 	;rowloop  
 		rowloop ADD	R5,	R1,	#-16
-        BRz	STOP        ; determine whether it's end
+        	BRz STOP       ; determine whether it's end
 		ADD r5, R1,#-1 ;check the first line
-		BRn,#2
+		BRn #2
 		LD R0, linefeed ;print \n
 		out
-        ADD	R1,	R1,	#1  ;counter+1
+        	ADD R1,	R1, #1  ;counter+1
 		LD R5, CHARI
 		ST R5,char
 			
@@ -33,7 +33,7 @@
 			ADD R3,R3,R3 ; R3x16
 			ADD R4,R4,R3 ; R4 hold the address in FONT data, R4=start+R3x16(16 row each char)
 			ADD R4,R4,R1
-			ADD R4,R4,#-1;  R4+R1-1
+			ADD R4,R4,#-1; R4+R1-1
 			LD R5,char
 			ADD r5,r5,#1
 			ST r5,char
@@ -41,15 +41,15 @@
 			
 				;columnloop
 				and r5,R5,#0 ;initialize counter
-			 	LDR	R2,	R4,	#0  ;load row value to R2
-			 	loop LD R6,check
+			 	LDR R2,	R4,	#0  ;load row value to R2
+			   loop LD R6,check
 				AND r6, R2, R6
 				BRz #3 
-                LDI R0, ones
-                out
-                BR #2
-                LDI R0, zeros
-                out
+                		LDI R0, ones
+                		out
+                		BR #2
+                		LDI R0, zeros
+                		out
 				ADD R2,R2,R2; R2 LEFT SHIFT
 				ADD r6, r5,#-7
 				BRz charloop
