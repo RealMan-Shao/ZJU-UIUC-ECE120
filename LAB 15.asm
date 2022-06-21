@@ -5,8 +5,8 @@
     AND	R2,	R2,	#0 ;row value
     AND	R3,	R3,	#0 ;character order in ASCII
     AND R4, R4, #0 ;character order in FONT_DATA
-	AND R5, R5, #0 ;cache
-	AND R6, R6, #0 ;cache
+    AND R5, R5, #0 ;cache
+    AND R6, R6, #0 ;cache
     AND R7, R7, #0
 
 
