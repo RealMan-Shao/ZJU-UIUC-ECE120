@@ -1,13 +1,13 @@
 ;this program read the value of each line, than decide output by each bit using a mask
 .ORIG	x3000
     ;initialize all registers
-    AND	R0,	R0, #0 ;print out
-    AND	R1,	R1, #0 ;R1 is row counter
-    AND	R2,	R2,	#0 ;row value
-    AND	R3,	R3,	#0 ;character order in ASCII
+    AND	R0, R0, #0 ;print out
+    AND	R1, R1, #0 ;R1 is row counter
+    AND	R2, R2,	#0 ;row value
+    AND	R3, R3,	#0 ;character order in ASCII
     AND R4, R4, #0 ;character order in FONT_DATA
-	AND R5, R5, #0 ;mask
-	AND R6, R6, #0 ;cache
+    AND R5, R5, #0 ;mask
+    AND R6, R6, #0 ;cache
     AND R7, R7, #0
 
 ;this is loading the FONT_DATA (which to print) to R4
